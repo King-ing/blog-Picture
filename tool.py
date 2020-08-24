@@ -5,6 +5,7 @@ import sys
 import json
 from datetime import datetime
 from ImageProcess import Graphics
+import shutil
 
 # 定义压缩比，数值越大，压缩越小
 SIZE_normal = 1.0
@@ -155,8 +156,19 @@ def cut_photo():
         else:
             pass
     else:
-        print("source directory not exist!")     
+        print("source directory not exist!")    
 
+def copy_move():
+    # 备份原图 
+    print("\n准备删除旧版photos文件夹，不用担心，我即将从Original_image文件夹里复制最新的photos文件夹。")
+    try:
+        # 删除photos文件夹
+        shutil.rmtree("photos")
+    except:
+        print("\n删除失败！\n似乎没找到旧版photos文件夹，没事，那我就直接从Original_image文件夹里复制最新的photos文件夹吧！")
+    print("\n正在生成最新版photos文件夹...")
+    shutil.copytree("Original_image", "photos")
+    print("\n生成成功！")
 
 
 def git_operation():
@@ -171,7 +183,8 @@ def git_operation():
     os.system('git push origin master')
 
 if __name__ == "__main__":
-    cut_photo()        # 裁剪图片，裁剪成正方形，去中间部分
+    copy_move()        # 将Original_image文件夹下的原图复制到photos文件夹下——备份原图
+    cut_photo()        # 裁剪photos文件夹下的图片，裁剪成正方形，去中间部分
     compress_photo()   # 压缩图片，并保存到mini_photos文件夹下
     git_operation()    # 提交到github仓库
     handle_photo()     # 将文件处理成json格式，存到博客仓库中
